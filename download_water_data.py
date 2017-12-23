@@ -1,0 +1,109 @@
+#!/usr/bin/env python
+
+'''Downloader for the Global Surface Water Data of the Copernicus Programme:
+https://global-surface-water.appspot.com/download
+
+Based on the original downloadWaterData.py'''
+
+__author__ = 'Petr Tsymbarovich'
+__email__ = 'petr@tsymbarovich.ru'
+__license__ = 'MIT'
+__version__ = '0.0.1'
+
+import sys
+import os
+import argparse
+if sys.version_info.major == 2:
+    # Python 2
+    from urllib import urlretrieve
+    from urllib2 import HTTPError
+else:
+    # Python 3
+    from urllib.request import urlretrieve
+    from urllib.error import HTTPError
+
+FILE_TMPL = '{ds}_{lon}_{lat}.tif'
+URL_TMPL = 'http://storage.googleapis.com/global-surface-water/downloads/{ds}/{file}'
+KNOWN_DATASETS = ['occurrence', 'change', 'seasonality', 'recurrence', 'transitions', 'extent']
+
+def main():
+    '''The main function.'''
+
+    # parse command line arguments
+    parser = argparse.ArgumentParser(
+        description='Full Download Script for Global Surface Water Data.')
+    parser.add_argument('-v', '--version', action='version', version=__version__)
+    parser.add_argument(
+        'datasets', metavar='DS', type=str, nargs='*',
+        help='one or more datasets names to download ({}), use the "-a" option to download \
+all the datasets'.format(', '.join(KNOWN_DATASETS)))
+    parser.add_argument(
+        '-d', '--directory', metavar='PATH', type=str, default=os.getcwd(),
+        help='destination directory where to download the data \
+(by default the current working directory is used)')
+    parser.add_argument(
+        '-a', '--all', action='store_true', default=False,
+        help='download all datasets (default is false)')
+    args = parser.parse_args()
+
+    # check parsed arguments
+    if args.datasets:
+        known_ds = set(KNOWN_DATASETS)
+        for ds_name in args.datasets:
+            if not ds_name in known_ds:
+                sys.stderr.write('error: unknown dataset name "{}"\n'.format(ds_name))
+                sys.exit(1)
+        if args.all:
+            print('warning: both dataset names and the option "-a" were provided - \
+ignoring datasets names and downloading all')
+            args.datasets = KNOWN_DATASETS
+    elif args.all:
+        print('downloading all datasets')
+        args.datasets = KNOWN_DATASETS
+    else:
+        sys.stderr.write('error: nothing to download - provide datasets names or \
+use the "-a" option to download all the datasets, for more information run with the "-h" option\n')
+        sys.exit(2)
+
+    # check output dir
+    args.directory = os.path.normpath(args.directory)
+    if not os.path.isdir(args.directory):
+        print('Creating destination directory "{}"'.format(args.directory))
+        os.makedirs(args.directory)
+    else:
+        print('Using destination directory "{}"'.format(args.directory))
+
+    # preparing coordinate suffixes
+    lons = [str(w) + 'W' for w in range(180, 0, -10)]
+    lons.extend([str(e) + 'E' for e in range(0, 180, 10)])
+    lats = [str(s) + 'S' for s in range(50, 0, -10)]
+    lats.extend([str(n) + 'N' for n in range(0, 90, 10)])
+    files_count = len(lons) * len(lats)
+    padding = len(str(files_count))
+
+    # downloading datasets
+    for ds_name in args.datasets:
+        print('downloading ' + ds_name)
+        ds_dir = os.path.join(args.directory, ds_name)
+        if not os.path.isdir(ds_dir):
+            os.makedirs(ds_dir)
+        counter = 1
+        for lon in lons:
+            for lat in lats:
+                filename = FILE_TMPL.format(ds=ds_name, lon=lon, lat=lat)
+                filepath = os.path.join(ds_dir, filename)
+                if os.path.exists(filepath):
+                    print('skipping existing file ' + filename)
+                else:
+                    url = URL_TMPL.format(ds=ds_name, file=filename)
+                    try:
+                        urlretrieve(url, filepath)
+                        print('{i: >{pad}}/{c} {name}'
+                              .format(i=counter, c=files_count, pad=padding, name=filename))
+                    except HTTPError as err:
+                        print(filename + ' - ' + str(err))
+                counter += 1
+    print('finished')
+
+if __name__ == "__main__":
+    main()
