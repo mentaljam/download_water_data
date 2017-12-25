@@ -26,7 +26,8 @@ class PyzCommand(cmd.Command):
         if not os.path.isdir(out_dir):
             os.makedirs(out_dir)
         with open(os.path.join(SRC_DIR, 'download_water_data', '__main__.py'), 'rb') as main:
-            zipapp.create_archive(main, os.path.join(out_dir, 'download_water_data.pyz'))
+            zipapp.create_archive(main, os.path.join(out_dir, 'download_water_data.pyz'),
+                                  interpreter='/usr/bin/env python')
 
 setup(
     cmdclass={
