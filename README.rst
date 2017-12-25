@@ -5,6 +5,15 @@ Downloader for the `Global Surface Water`_ data of the Copernicus Programme.
 
 It is based on the original downloadWaterData.py.
 
+.. image:: https://img.shields.io/pypi/pyversions/download_water_data.svg
+    :target: https://pypi.python.org/pypi/download-water-data
+
+.. image:: https://img.shields.io/pypi/v/download-water-data.svg
+    :target: https://pypi.python.org/pypi/download-water-data
+
+.. image:: https://img.shields.io/github/issues/mentaljam/download_water_data.svg
+    :target: https://github.com/mentaljam/download_water_data/issues
+
 Requirements
 ------------
 
