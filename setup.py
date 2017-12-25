@@ -54,6 +54,6 @@ setup(
     keywords='Copernicus global surface water download',
     packages=['download_water_data'],
     entry_points={
-        'console_scripts': ['download_water_data=download_water_data:main']
+        'console_scripts': ['download_water_data=download_water_data.__main__:main']
     }
 )
