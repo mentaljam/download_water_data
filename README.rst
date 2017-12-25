@@ -1,33 +1,38 @@
 Download Water Data
 ===================
 
-Downloader for the `Global Surface Water`_ data of the Copernicus
-Programme.
+Downloader for the `Global Surface Water`_ data of the Copernicus Programme.
 
 It is based on the original downloadWaterData.py.
 
 Requirements
 ------------
 
-This tool runs on Windows/Mac/Unix and requires `Python`_ version 2 or
-3.
+This tool runs on Windows/Mac/Unix and requires `Python`_ version 2 or 3.
 
 Usage
 -----
 
--  Download the `latest`_ release of the tool and unzip it somewhere
+**Install with** `pip`_
+
+- Install the tool with ``python -m pip install download_water_data``
+- Run the tool with ``python -m download_water_data <arguments>`` or just
+  ``download_water_data <arguments>`` if the Python Scripts directory is in your system ``PATH``
+
+**Download without installing**
+
+-  Download the `latest`_ ``download_water_data.pyz`` file
 -  Open a terminal or console
--  Run the tool with ``python download_water_data.py <arguments>``
+-  Run the tool with ``python download_water_data.pyz <arguments>``
 
 Arguments
 ---------
 
-Possible tool arguments and options can be listed with the ``-h``
-option:
+Possible tool arguments and options can be listed with the ``-h`` option:
 
 ::
 
-    $ python download_water_data.py -h
+    $ download_water_data -h
 
     usage: download_water_data.py [-h] [-v] [-d PATH] [-a] [DS [DS ...]]
 
@@ -51,16 +56,17 @@ Examples
 
 To download the **occurrence** and **change** datasets run
 
-``python download_water_data.py occurrence change``
+``download_water_data occurrence change``
 
 To download all the datasets run
 
-``python download_water_data.py -a``
+``download_water_data -a``
 
 To change the destination directory add the ``-d`` option
 
-``python download_water_data.py -a -d 'download/path'``
+``download_water_data -a -d 'download/path'``
 
 .. _Global Surface Water: https://global-surface-water.appspot.com
 .. _Python: https://www.python.org
+.. _pip: https://pip.pypa.io/en/stable
 .. _latest: https://github.com/mentaljam/download_water_data/releases/latest
