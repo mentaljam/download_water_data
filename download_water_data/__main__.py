@@ -8,7 +8,7 @@ Based on the original downloadWaterData.py'''
 __author__ = 'Petr Tsymbarovich'
 __email__ = 'petr@tsymbarovich.ru'
 __license__ = 'MIT'
-__version__ = '0.1.0'
+__version__ = '0.1.1'
 
 import sys
 import os
