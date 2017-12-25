@@ -108,21 +108,25 @@ use the "-a" option to download all the datasets, for more information run with 
         if not os.path.isdir(ds_dir):
             os.makedirs(ds_dir)
         counter = 1
+        padding2 = len(ds_name) + 15 # len('180E_180N.tif')
         for lon in lons:
             for lat in lats:
                 filename = FILE_TMPL.format(ds=ds_name, lon=lon, lat=lat)
                 filepath = os.path.join(ds_dir, filename)
+                sys.stdout.write('{i: >{pad}}/{c} {name: <{pad2}}'
+                                 .format(i=counter, c=files_count, pad=padding,
+                                         name=filename, pad2=padding2))
+                sys.stdout.flush()
                 if skip and os.path.exists(filepath):
-                    print('skipping existing file ' + filename)
+                    print('already exists, skipping')
                 else:
                     url = URL_TMPL.format(ds=ds_name, file=filename)
                     try:
                         part_file = filepath + '.part'
                         _GLOBALS['part_file'] = part_file
                         urlretrieve(url, part_file)
-                        print('{i: >{pad}}/{c} {name}'
-                              .format(i=counter, c=files_count, pad=padding, name=filename))
                         os.rename(part_file, filepath)
+                        print('ok')
                     except HTTPError as err:
                         print(filename + ' - ' + str(err))
                 counter += 1
