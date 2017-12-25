@@ -44,6 +44,9 @@ all the datasets'.format(', '.join(KNOWN_DATASETS)))
     parser.add_argument(
         '-a', '--all', action='store_true', default=False,
         help='download all datasets (default is false)')
+    parser.add_argument(
+        '-f', '--force', action='store_true', default=False,
+        help='rewrite existing files (default is false)')
     args = parser.parse_args()
 
     # check parsed arguments
@@ -82,6 +85,7 @@ use the "-a" option to download all the datasets, for more information run with 
     padding = len(str(files_count))
 
     # downloading datasets
+    skip = not args.force
     for ds_name in args.datasets:
         print('downloading ' + ds_name)
         ds_dir = os.path.join(args.directory, ds_name)
@@ -92,7 +96,7 @@ use the "-a" option to download all the datasets, for more information run with 
             for lat in lats:
                 filename = FILE_TMPL.format(ds=ds_name, lon=lon, lat=lat)
                 filepath = os.path.join(ds_dir, filename)
-                if os.path.exists(filepath):
+                if skip and os.path.exists(filepath):
                     print('skipping existing file ' + filename)
                 else:
                     url = URL_TMPL.format(ds=ds_name, file=filename)

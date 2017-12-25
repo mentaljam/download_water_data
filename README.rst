@@ -59,6 +59,7 @@ Possible tool arguments and options can be listed with the ``-h`` option:
                             destination directory where to download the data (by
                             default the current working directory is used)
       -a, --all             download all datasets (default is false)
+      -f, --force           rewrite existing files (default is false)
 
 Examples
 --------
