@@ -26,12 +26,16 @@ else:
 FILE_TMPL = '{ds}_{lon}_{lat}.tif'
 URL_TMPL = 'http://storage.googleapis.com/global-surface-water/downloads/{ds}/{file}'
 KNOWN_DATASETS = ['occurrence', 'change', 'seasonality', 'recurrence', 'transitions', 'extent']
+_GLOBALS = {}
 
 
 def sigint_handler(signum, frame):
     '''Handler for interruption signal (Ctrl+C).'''
 
     print('\ninterrupted by user')
+    part_file = _GLOBALS['part_file']
+    if os.path.exists(part_file):
+        os.remove(part_file)
     sys.exit(0)
 
 
@@ -113,9 +117,12 @@ use the "-a" option to download all the datasets, for more information run with 
                 else:
                     url = URL_TMPL.format(ds=ds_name, file=filename)
                     try:
-                        urlretrieve(url, filepath)
+                        part_file = filepath + '.part'
+                        _GLOBALS['part_file'] = part_file
+                        urlretrieve(url, part_file)
                         print('{i: >{pad}}/{c} {name}'
                               .format(i=counter, c=files_count, pad=padding, name=filename))
+                        os.rename(part_file, filepath)
                     except HTTPError as err:
                         print(filename + ' - ' + str(err))
                 counter += 1
