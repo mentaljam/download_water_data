@@ -11,6 +11,7 @@ __license__ = 'MIT'
 __version__ = '0.1.1'
 
 import sys
+import signal
 import os
 import argparse
 if sys.version_info.major == 2:
@@ -26,8 +27,19 @@ FILE_TMPL = '{ds}_{lon}_{lat}.tif'
 URL_TMPL = 'http://storage.googleapis.com/global-surface-water/downloads/{ds}/{file}'
 KNOWN_DATASETS = ['occurrence', 'change', 'seasonality', 'recurrence', 'transitions', 'extent']
 
+
+def sigint_handler(signum, frame):
+    '''Handler for interruption signal (Ctrl+C).'''
+
+    print('\ninterrupted by user')
+    sys.exit(0)
+
+
 def main():
     '''The main function.'''
+
+    # register sigint handler
+    signal.signal(signal.SIGINT, sigint_handler)
 
     # parse command line arguments
     parser = argparse.ArgumentParser(
@@ -108,6 +120,7 @@ use the "-a" option to download all the datasets, for more information run with 
                         print(filename + ' - ' + str(err))
                 counter += 1
     print('finished')
+
 
 if __name__ == "__main__":
     main()

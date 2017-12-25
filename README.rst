@@ -34,6 +34,8 @@ Usage
 -  Open a terminal or console
 -  Run the tool with ``python download_water_data.pyz <arguments>``
 
+To **interrupt** tool execution press ``Ctrl+C``.
+
 Arguments
 ---------
 
