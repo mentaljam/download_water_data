@@ -8,7 +8,7 @@ Based on the original downloadWaterData.py'''
 __author__ = 'Petr Tsymbarovich'
 __email__ = 'petr@tsymbarovich.ru'
 __license__ = 'MIT'
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 
 import sys
 import signal
@@ -23,10 +23,31 @@ else:
     from urllib.request import urlretrieve
     from urllib.error import HTTPError
 
-FILE_TMPL = '{ds}_{lon}_{lat}.tif'
-URL_TMPL = 'http://storage.googleapis.com/global-surface-water/downloads/{ds}/{file}'
+
 KNOWN_DATASETS = ['occurrence', 'change', 'seasonality', 'recurrence', 'transitions', 'extent']
+REVISIONS = ['1_0', '1_1', '1_1_2019']
 _GLOBALS = {}
+
+
+def templates(revision):
+    '''Configure URL and file templates'''
+
+    v10, v11, v11_2019 = REVISIONS
+    url_tmpl  = 'http://storage.googleapis.com/global-surface-water/downloads'
+    file_tmpl = '{ds}_{lon}_{lat}'
+    if revision == v10:
+        padding   = 15
+    elif revision == v11:
+        url_tmpl  += '2'
+        file_tmpl += '_v' + v11
+        padding   = 20
+    elif revision == v11_2019:
+        url_tmpl  += '2019v2'
+        file_tmpl += 'v' + v11_2019
+        padding   = 24
+    url_tmpl  += '/{ds}/{file}'
+    file_tmpl += '.tif'
+    return (url_tmpl, file_tmpl, padding)
 
 
 def sigint_handler(signum, frame):
@@ -57,6 +78,9 @@ all the datasets'.format(', '.join(KNOWN_DATASETS)))
         '-d', '--directory', metavar='PATH', type=str, default=os.getcwd(),
         help='destination directory where to download the data \
 (by default the current working directory is used)')
+    parser.add_argument(
+        '-r', '--revision', choices=REVISIONS, default=REVISIONS[2],
+        help='data revision (default is 1_1_2019)')
     parser.add_argument(
         '-a', '--all', action='store_true', default=False,
         help='download all datasets (default is false)')
@@ -100,6 +124,9 @@ use the "-a" option to download all the datasets, for more information run with 
     files_count = len(lons) * len(lats)
     padding = len(str(files_count))
 
+    # configure templates
+    url_tmpl, file_tmpl, filename_padding = templates(args.revision)
+
     # downloading datasets
     skip = not args.force
     for ds_name in args.datasets:
@@ -108,10 +135,10 @@ use the "-a" option to download all the datasets, for more information run with 
         if not os.path.isdir(ds_dir):
             os.makedirs(ds_dir)
         counter = 1
-        padding2 = len(ds_name) + 15 # len('180E_180N.tif')
+        padding2 = len(ds_name) + filename_padding
         for lon in lons:
             for lat in lats:
-                filename = FILE_TMPL.format(ds=ds_name, lon=lon, lat=lat)
+                filename = file_tmpl.format(ds=ds_name, lon=lon, lat=lat)
                 filepath = os.path.join(ds_dir, filename)
                 sys.stdout.write('{i: >{pad}}/{c} {name: <{pad2}}'
                                  .format(i=counter, c=files_count, pad=padding,
@@ -120,7 +147,7 @@ use the "-a" option to download all the datasets, for more information run with 
                 if skip and os.path.exists(filepath):
                     print('already exists, skipping')
                 else:
-                    url = URL_TMPL.format(ds=ds_name, file=filename)
+                    url = url_tmpl.format(ds=ds_name, file=filename)
                     try:
                         part_file = filepath + '.part'
                         _GLOBALS['part_file'] = part_file

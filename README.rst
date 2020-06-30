@@ -60,6 +60,8 @@ Possible tool arguments and options can be listed with the ``-h`` option:
       -d PATH, --directory PATH
                             destination directory where to download the data (by
                             default the current working directory is used)
+      -r {1_0,1_1,1_1_2019}, --revision {1_0,1_1,1_1_2019}
+                            data revision (default is 1_1_2019)
       -a, --all             download all datasets (default is false)
       -f, --force           rewrite existing files (default is false)
 
