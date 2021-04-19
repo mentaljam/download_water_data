@@ -25,14 +25,14 @@ else:
 
 
 KNOWN_DATASETS = ['occurrence', 'change', 'seasonality', 'recurrence', 'transitions', 'extent']
-REVISIONS = ['1_0', '1_1', '1_1_2019']
+REVISIONS = ['1_0', '1_1', '1_1_2019', '1_3_2020']
 _GLOBALS = {}
 
 
 def templates(revision):
     '''Configure URL and file templates'''
 
-    v10, v11, v11_2019 = REVISIONS
+    v10, v11, v11_2019, v13_2020 = REVISIONS
     url_tmpl  = 'http://storage.googleapis.com/global-surface-water/downloads'
     file_tmpl = '{ds}_{lon}_{lat}'
     if revision == v10:
@@ -44,6 +44,10 @@ def templates(revision):
     elif revision == v11_2019:
         url_tmpl  += '2019v2'
         file_tmpl += 'v' + v11_2019
+        padding   = 24
+    elif revision == v13_2020:
+        url_tmpl  += '2020'
+        file_tmpl += 'v' + v13_2020
         padding   = 24
     url_tmpl  += '/{ds}/{file}'
     file_tmpl += '.tif'
