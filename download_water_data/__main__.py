@@ -83,8 +83,8 @@ all the datasets'.format(', '.join(KNOWN_DATASETS)))
         help='destination directory where to download the data \
 (by default the current working directory is used)')
     parser.add_argument(
-        '-r', '--revision', choices=REVISIONS, default=REVISIONS[2],
-        help='data revision (default is 1_1_2019)')
+        '-r', '--revision', choices=REVISIONS, default=REVISIONS[-1],
+        help='data revision (default is %(default)s)')
     parser.add_argument(
         '-a', '--all', action='store_true', default=False,
         help='download all datasets (default is false)')
