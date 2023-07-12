@@ -24,15 +24,15 @@ else:
     from urllib.error import HTTPError
 
 
-KNOWN_DATASETS = ['occurrence', 'change', 'seasonality', 'recurrence', 'transitions', 'extent']
-REVISIONS = ['1_0', '1_1', '1_1_2019', '1_3_2020']
+KNOWN_DATASETS = 'occurrence', 'change', 'seasonality', 'recurrence', 'transitions', 'extent'
+REVISIONS = '1_0', '1_1', '1_1_2019', '1_3_2020', '1_4_2021'
 _GLOBALS = {}
 
 
 def templates(revision):
     '''Configure URL and file templates'''
 
-    v10, v11, v11_2019, v13_2020 = REVISIONS
+    v10, v11, v11_2019, v13_2020, v14_2021 = REVISIONS
     url_tmpl  = 'http://storage.googleapis.com/global-surface-water/downloads'
     file_tmpl = '{ds}_{lon}_{lat}'
     if revision == v10:
@@ -48,6 +48,10 @@ def templates(revision):
     elif revision == v13_2020:
         url_tmpl  += '2020'
         file_tmpl += 'v' + v13_2020
+        padding   = 24
+    elif revision == v14_2021:
+        url_tmpl  += '2021'
+        file_tmpl += 'v' + v14_2021
         padding   = 24
     url_tmpl  += '/{ds}/{file}'
     file_tmpl += '.tif'
